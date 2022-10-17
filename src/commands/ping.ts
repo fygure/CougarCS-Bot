@@ -7,15 +7,16 @@ export const ping: Command = {
     .setName("ping")
     .setDescription("Basic Discord bot command example"),
   run: async (interaction, client) => {
+    // ephemeral: true <- only user that called command can see it.
     await interaction.deferReply({ ephemeral: false });
     const { user } = interaction;
     const returnMessage = createEmbeded(
-      "Pong!",
-      "Thanks for using /ping, " + user.username + "!",
+      "Pong!", //Title
+      "Thanks for using /ping, " + user.username + "!", //Description
       user,
       client
     )
-      .setColor("Red")
+      .setColor("Green")
       .setFooter(null)
       .setTimestamp(null);
     await interaction.editReply({ embeds: [returnMessage] });
