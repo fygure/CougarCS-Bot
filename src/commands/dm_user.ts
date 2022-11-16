@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from "discord.js";
 import { Command } from "../interfaces/Command";
 import { createEmbeded } from "../utils/embeded";
+import https from "https";
+import "dotenv"
 
 export const profile: Command = {
   data: new SlashCommandBuilder()
@@ -16,13 +18,52 @@ export const profile: Command = {
       user,
       client
     )
-      .setColor("Green")
-      .setFooter(null)
-      .setTimestamp(null);
+    .setColor("Green")
+    .setFooter(null)
+    .setTimestamp(null);
+    //end returnMessage
 
-        user.send('yo')
-
-
+    //start api call and message
+    https.get(
+      `${process.env.ASTRO_API}/test/members`, // "/endpoint" will be your actual endpoint
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+        res.on("end", () => {
+          const json = JSON.parse(data);
+          // Here is where you can edit your reply with the data from "json"
+          /*
+            TODO:
+            - find connection between member profiles and discord id
+            - use that to call data from each member
+            - format into presentable profile stats
+            - need member coin too
+          */
+         
+          // Display profile embed
+          const message = createEmbeded(
+            "CougarCS profile: " + user.username, //Title
+            "contact_id: " + json[0].contact_id, //Description
+            user,
+            client
+          )
+          .setColor("Blue")
+          .setFooter(null)
+          .setTimestamp(null);
+            
+          user.send({embeds: [message]})
+          console.log(user)
+          //console.log(json[0].contact_id);
+          
+          // If you wanna see exactly what the output is for testing, you can do this
+          //interaction.editReply(JSON.stringify(json));
+        });
+      }
+    );
+    //end api call and message
+    
 
 
     // if successful, send this
@@ -30,3 +71,12 @@ export const profile: Command = {
     return;
   },
 };
+
+
+//TODO:
+/*
+  - connect to astro API
+  - send a get request to the api to get user's data
+  - format data into a message
+  - send to user
+*/
