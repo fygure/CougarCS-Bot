@@ -45,7 +45,14 @@ export const profile: Command = {
           // Display profile embed
           const message = createEmbeded(
             "CougarCS profile: " + user.username, //Title
-            "contact_id: " + json[0].contact_id, //Description
+            "\nContact ID: " + json[0].contact_id +  //Description
+            "\nUH ID: " + json[0].uh_id +
+            "\nEmail: " + json[0].email +
+            "\nFirst Name: " + json[0].first_name +
+            "\nLast Name: " + json[0].last_name +
+            "\nPhone Number: " + json[0].phone_number +
+            "\nShirt Size: " + json[0].shirt_size_id +
+            "\nTimestamp: " + json[0].timestamp, 
             user,
             client
           )
@@ -56,7 +63,7 @@ export const profile: Command = {
           user.send({embeds: [message]})
           console.log(user)
           //console.log(json[0].contact_id);
-          
+
           // If you wanna see exactly what the output is for testing, you can do this
           //interaction.editReply(JSON.stringify(json));
         });
