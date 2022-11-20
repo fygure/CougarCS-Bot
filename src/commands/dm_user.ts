@@ -3,6 +3,7 @@ import { Command } from "../interfaces/Command";
 import { createEmbeded } from "../utils/embeded";
 import https from "https";
 import "dotenv"
+import { create } from "domain";
 
 export const profile: Command = {
   data: new SlashCommandBuilder()
@@ -22,7 +23,12 @@ export const profile: Command = {
     .setFooter(null)
     .setTimestamp(null);
     //end returnMessage
-
+    const load_message = createEmbeded(
+      "Retrieving data",
+      "..Please wait..",
+      user,
+      client
+    )
     //start api call and message
     https.get(
       `${process.env.ASTRO_API}/test/members`, // "/endpoint" will be your actual endpoint
@@ -36,30 +42,34 @@ export const profile: Command = {
           // Here is where you can edit your reply with the data from "json"
           /*
             TODO:
-            - find connection between member profiles and discord id
+            - find connection between member profiles and discord id (use email for now)
             - use that to call data from each member
             - format into presentable profile stats
             - need member coin too
+            - get icon pack for cougarCS images
+            - format embed below to the djs documentation
           */
+          
          
           // Display profile embed
+          const image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Sign-check-icon.png/640px-Sign-check-icon.png"
           const message = createEmbeded(
             "CougarCS profile: " + user.username, //Title
-            "\nContact ID: " + json[0].contact_id +  //Description
-            "\nUH ID: " + json[0].uh_id +
-            "\nEmail: " + json[0].email +
-            "\nFirst Name: " + json[0].first_name +
-            "\nLast Name: " + json[0].last_name +
-            "\nPhone Number: " + json[0].phone_number +
-            "\nShirt Size: " + json[0].shirt_size_id +
-            "\nTimestamp: " + json[0].timestamp, 
+            "\n***Contact ID:*** " + json[0].contact_id +  //Description
+            "\n***UH ID:*** " + json[0].uh_id +
+            "\n***Email:*** " + json[0].email +
+            "\n***First Name:*** " + json[0].first_name +
+            "\n***Last Name:*** " + json[0].last_name +
+            "\n***Phone Number:*** " + json[0].phone_number +
+            "\n***Shirt Size:*** " + json[0].shirt_size_id,
+            //"\n***Timestamp:*** " + json[0].timestamp, 
             user,
             client
           )
-          .setColor("Blue")
-          .setFooter(null)
-          .setTimestamp(null);
-            
+          .setColor("Red")
+          .setFooter({text: `${client.user?.tag}`}) //CougarCS Bot signing
+          .setTimestamp(null)
+          .setImage(image_url);
           user.send({embeds: [message]})
           console.log(user)
           //console.log(json[0].contact_id);
@@ -72,7 +82,7 @@ export const profile: Command = {
     //end api call and message
     
 
-
+    interaction.editReply({ embeds: [load_message]} );
     // if successful, send this
     await interaction.editReply({ embeds: [returnMessage] });
     return;
