@@ -5,7 +5,13 @@ import { createEmbeded } from "../utils/embeded";
 export const ping: Command = {
   data: new SlashCommandBuilder()
     .setName("ping")
-    .setDescription("Basic Discord bot command example"),
+    .setDescription("Basic Discord bot command example")
+    .addStringOption((option) =>
+      option
+        .setName("email")
+        .setDescription("The email you entered when signing up for member")
+        .setRequired(true)
+    ),
   run: async (interaction, client) => {
     // ephemeral: true <- only user that called command can see it.
     await interaction.deferReply({ ephemeral: false });
@@ -19,6 +25,10 @@ export const ping: Command = {
       .setColor("Green")
       .setFooter(null)
       .setTimestamp(null);
+
+    const email = interaction.options.get('email', true);
+    console.log(email);
+
     await interaction.editReply({ embeds: [returnMessage] });
     return;
   },
